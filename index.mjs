@@ -18,6 +18,7 @@ const HAND = ['VIOLET', 'INDIGO', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'RED'];
 const OUTCOME = ['A_WINS', 'B_WINS', 'NO_ONE'];
 
 const Player = (Who) => ({
+    ...stdlib.hasRandom,
     getHand: () => {
         const hand = Math.floor(Math.random() * 7);
         console.log(`${Who} played ${HAND[hand]}`);
@@ -26,12 +27,16 @@ const Player = (Who) => ({
     seeOutcome: (outcome) => {
         console.log(`${Who} saw outcome ${OUTCOME[outcome]}`);
     },
+    informTimeout: () => {
+        console.log(`${Who} observed a timeout`);
+    },
 });
 
 await Promise.all([
     ctcAlice.p.Alice({
         ...Player('Alice'),
         wager: stdlib.parseCurrency(5),
+        deadline: 10,
     }),
     ctcBob.p.Bob({
         ...Player('Bob'),
