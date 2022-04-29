@@ -3,51 +3,48 @@ import * as backend from './build/index.main.mjs';
 const stdlib = loadStdlib(process.env);
 
 const startingBalance = stdlib.parseCurrency(100);
-const accAlice = await stdlib.newTestAccount(startingBalance);
-const accBob = await stdlib.newTestAccount(startingBalance);
 
-const fmt = (x) => stdlib.formatCurrency(x, 4);
-const getBalance = async (who) => fmt(await stdlib.balanceOf(who));
-const beforeAlice = await getBalance(accAlice);
-const beforeBob = await getBalance(accBob);
-
-const ctcAlice = accAlice.contract(backend);
-const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
-
+const numOfBuyers = 2;
 const HAND = ['VIOLET', 'INDIGO', 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'RED'];
-const OUTCOME = ['A_WINS', 'B_WINS', 'NO_ONE'];
 
-const Player = (Who) => ({
-    ...stdlib.hasRandom,
-    getHand: () => {
-        const hand = Math.floor(Math.random() * 7);
-        console.log(`${Who} played ${HAND[hand]}`);
-        return hand;
-    },
-    seeOutcome: (outcome) => {
-        console.log(`${Who} saw outcome ${OUTCOME[outcome]}`);
-    },
-    informTimeout: () => {
-        console.log(`${Who} observed a timeout`);
-    },
-});
+const accFunder = await stdlib.newTestAccount(startingBalance);
+const accBuyerArray = await Promise.all(
+    Array.from({ length: numOfBuyers }, () =>
+        stdlib.newTestAccount(startingBalance)
+    )
+);
+
+const ctcFunder = accFunder.contract(backend);
+const ctcInfo = ctcFunder.getInfo();
+
+const funderParams = {
+    wager: stdlib.parseCurrency(5),
+    deadline: 2,
+    solutions: [0, 6],
+};
 
 await Promise.all([
-    ctcAlice.p.Alice({
-        ...Player('Alice'),
-        wager: stdlib.parseCurrency(5),
-        deadline: 10,
+    backend.Funder(ctcFunder, {
+        showOutcome: (outcome) => console.log(`Funder saw ${stdlib.formatAddress(outcome[0])} and ${stdlib.formatAddress(outcome[1])} won.`),
+        getParams: () => funderParams,
     }),
-    ctcBob.p.Bob({
-        ...Player('Bob'),
-        acceptWager: (amt) => {
-            console.log(`Bob accepts the wager of ${fmt(amt)}.`);
-        },
-    }),
-]);
-
-const afterAlice = await getBalance(accAlice);
-const afterBob = await getBalance(accBob);
-
-console.log(`Alice went from ${beforeAlice} to ${afterAlice}.`);
-console.log(`Bob went from ${beforeBob} to ${afterBob}.`);
+].concat(
+    accBuyerArray.map((accBuyer, i) => {
+        const ctcBuyer = accBuyer.contract(backend, ctcInfo);
+        return backend.Buyer(ctcBuyer, {
+            showOutcome: (outcome) => {
+                console.log(`Buyer ${i} saw they ${stdlib.addressEq(outcome[0], accBuyer) || stdlib.addressEq(outcome[1], accBuyer) ? 'won' : 'lost'}.`);
+            },
+            getAnswers: () => {
+                const ans1 = Math.floor(Math.random() * 7);
+                const ans2 = Math.floor(Math.random() * 7);
+                return [ans1, ans2];
+            },
+            showAnswers: (addr, answers) => {
+                if (stdlib.addressEq(addr, accBuyer)) {
+                    console.log(`Buyer ${i} played ${HAND[answers[0]]} and ${HAND[answers[1]]}`);
+                }
+            }
+        });
+    })
+));
