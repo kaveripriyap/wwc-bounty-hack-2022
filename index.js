@@ -9,13 +9,23 @@ import { loadStdlib } from '@reach-sh/stdlib';
 const reach = loadStdlib(process.env);
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
 reach.setWalletFallback(reach.walletFallback({
-  providerEnv: 'TestNet', MyAlgoConnect }));
+    providerEnv: {
+        ALGO_TOKEN: '',
+        ALGO_SERVER: "https://testnet-api.algonode.cloud",
+        ALGO_PORT: '',
+        ALGO_INDEXER_TOKEN: '',
+        ALGO_INDEXER_SERVER: "https://testnet-idx.algonode.cloud",
+        ALGO_INDEXER_PORT: '',
+    }, MyAlgoConnect
+}));
 
-const handToInt = { 'VIOLET': 0, 'INDIGO': 1, 'BLUE': 2, 
-                    'GREEN': 3, 'YELLOW': 4, 'ORANGE': 5, 'RED': 6 };
-const intToOutcome = ['Alice wins!', 'Bob wins!', 'No one wins!'];
+const handToInt = {
+    'VIOLET': 0, 'INDIGO': 1, 'BLUE': 2,
+    'GREEN': 3, 'YELLOW': 4, 'ORANGE': 5, 'RED': 6
+};
+const intToOutcome = ['A wins!', 'B wins!', 'No one wins!'];
 const { standardUnit } = reach;
-const defaults = { defaultFundAmt: '10', defaultWager: '3', standardUnit };
+const defaults = { defaultFundAmt: '10', defaultWager: '1', standardUnit };
 
 class App extends React.Component {
     constructor(props) {
