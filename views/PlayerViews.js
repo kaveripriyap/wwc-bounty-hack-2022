@@ -32,34 +32,46 @@ exports.GetHand = class extends React.Component {
                         </div>
                     </div>
                 </div>
-                <button
+                <div class="container text-center">
+                <h3 class=""> Choose the 
+                    <span class="a">r</span>
+                    <span class="b">a</span>
+                    <span class="c">i</span>
+                    <span class="d">n</span>
+                    <span class="e">b</span>
+                    <span class="f">o</span>
+                    <span class="a">w</span> 
+                    color that was switched! </h3>
+                </div>
+                <button class="rainbow rainbow-1"
                     disabled={!playable}
                     onClick={() => parent.playHand('VIOLET')}
                 >Violet</button>
-                <button
+                <button class="rainbow rainbow-2"
                     disabled={!playable}
                     onClick={() => parent.playHand('INDIGO')}
                 >Indigo</button>
-                <button
+                <button class="rainbow rainbow-3"
                     disabled={!playable}
                     onClick={() => parent.playHand('BLUE')}
                 >Blue</button>
-                                <button
+                <button class="rainbow rainbow-4"
                     disabled={!playable}
                     onClick={() => parent.playHand('GREEN')}
                 >Green</button>
-                <button
+                <button class="rainbow rainbow-5"
                     disabled={!playable}
                     onClick={() => parent.playHand('YELLOW')}
                 >Yellow</button>
-                <button
+                <button class="rainbow rainbow-6"
                     disabled={!playable}
                     onClick={() => parent.playHand('ORANGE')}
                 >Orange</button>
-                <button
+                <button class="rainbow rainbow-7"
                     disabled={!playable}
                     onClick={() => parent.playHand('RED')}
                 >Red</button>
+
             </div>
         );
     }
