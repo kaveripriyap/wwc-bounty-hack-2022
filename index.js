@@ -4,6 +4,7 @@ import DeployerViews from './views/DeployerViews';
 import AttacherViews from './views/AttacherViews';
 import { renderDOM, renderView } from './views/render';
 import './index.css';
+import './index.scss';
 import * as backend from './build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
 const reach = loadStdlib(process.env);

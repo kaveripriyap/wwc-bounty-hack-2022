@@ -14,6 +14,15 @@ exports.GetHand = class extends React.Component {
                 <br />
                 {!playable ? 'Please wait...' : ''}
                 <br />
+                <div class="rainbow-preloader">
+                <div class="rainbow-stripe"></div>
+                <div class="rainbow-stripe"></div>
+                <div class="rainbow-stripe"></div>
+                <div class="rainbow-stripe"></div>
+                <div class="rainbow-stripe"></div>
+                <div class="shadow"></div>
+                <div class="shadow"></div>
+                </div>
                 <button
                     disabled={!playable}
                     onClick={() => parent.playHand('VIOLET')}
