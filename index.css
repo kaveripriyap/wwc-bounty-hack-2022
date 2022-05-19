@@ -273,37 +273,37 @@ body {
   }
   
   .rainbow-1:hover{
-     background-color: #000000;
+     background-color: violet;
      transition: 0.7s;
   }
   
   .rainbow-2:hover{
-    background-color: #000000;
+    background-color: indigo;
     transition: 0.7s;
   }
   
   .rainbow-3:hover{
-    background-color: #000000;
+    background-color: blue;
     transition: 0.7s;
   }
   
   .rainbow-4:hover{
-    background-color: #000000;
+    background-color: green;
     transition: 0.7s;
   }
   
   .rainbow-5:hover{
-    background-color: #000000;
+    background-color: yellow;
     transition: 0.7s;
   }
   
   .rainbow-6:hover{
-    background-color: #000000;
+    background-color: orange;
     transition: 0.7s;
   }
   
   .rainbow-7:hover{
-    background-color: #000000;
+    background-color: red;
     transition: 0.7s;
   }
   
