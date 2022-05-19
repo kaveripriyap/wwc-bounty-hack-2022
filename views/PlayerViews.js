@@ -14,14 +14,23 @@ exports.GetHand = class extends React.Component {
                 <br />
                 {!playable ? 'Please wait...' : ''}
                 <br />
-                <div class="rainbow-preloader">
-                <div class="rainbow-stripe"></div>
-                <div class="rainbow-stripe"></div>
-                <div class="rainbow-stripe"></div>
-                <div class="rainbow-stripe"></div>
-                <div class="rainbow-stripe"></div>
-                <div class="shadow"></div>
-                <div class="shadow"></div>
+                <div class="container">
+                    <div class="semicircle1">
+                        <div class="semicircle2">
+                        <div class="semicircle3">
+                            <div class="semicircle4">
+                            <div class="semicircle5">
+                                <div class="semicircle6">
+                                <div class="semicircle7">
+                                    <div class="semicircle8">
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 </div>
                 <button
                     disabled={!playable}

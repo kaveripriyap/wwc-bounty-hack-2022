@@ -1,3 +1,59 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+.App {
+    text-align: center;
+}
+
+.App-header {
+    background-color: #f5e1fd;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #dcfffb;
+}
+
+input[type=number] {
+    font-size: calc(10px + 2vmin);
+    width: 4em;
+}
+
+button {
+    font-size: calc(10px + 2vmin);
+}
+
+textarea {
+    font-size: calc(10px + 2vmin);
+}
+
+.ContractInfo {
+    font-size: calc(10px + 1vmin);
+    text-align: left;
+    width: 90vw;
+    height: 7em;
+    padding: 2vw;
+    overflow-x: scroll;
+    white-space: pre;
+}
+
 $rainbow : (
   red : rgba(241,90,90,1),
   yellow : rgba(240,196,25,1),
@@ -19,10 +75,12 @@ $z : length($rainbow);
     height: $dimension;
     left: $offset;
     -webkit-transform : rotate(180deg);
+    transform : rotate(180deg);
     top: $offset;
     width: $dimension;
     z-index: $z;
     -webkit-animation: rainbow-in-out length($rainbow)+s #{$i / (length($rainbow)*2)}s infinite;
+    animation: rainbow-in-out length($rainbow)+s #{$i / (length($rainbow)*2)}s infinite;
     
     &:before {
       border:($borderWidth/4) solid darken($value, 10%);
@@ -86,7 +144,7 @@ body {
   overflow-x:hidden;
 }
 
-@-webkit-keyframes rainbow-in-out {
+@keyframes rainbow-in-out {
   0% {-webkit-transform : rotate(180deg);}
   33% {-webkit-transform : rotate(360deg);}
   66% {-webkit-transform : rotate(360deg);}

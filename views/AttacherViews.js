@@ -8,7 +8,8 @@ exports.Wrapper = class extends React.Component {
         const { content } = this.props;
         return (
             <div className="Attacher">
-                <h2>Attacher (Kinnu)</h2>
+                <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,600,800&display=swap" rel="stylesheet"></link>
+                <h2 class="rainbow-text">Attacher (Kinnu)</h2>
                 {content}
             </div>
         );

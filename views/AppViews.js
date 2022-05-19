@@ -8,7 +8,8 @@ exports.Wrapper = class extends React.Component {
     return (
       <div className="App">
         <header className="App-header" id="root">
-          <h1>Rainbow Rage!</h1>
+          <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,600,800&display=swap" rel="stylesheet"></link>
+            <h1 class="rainbow-text">Rainbow Rage!</h1>
           {content}
         </header>
       </div>
