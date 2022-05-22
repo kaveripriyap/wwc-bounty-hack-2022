@@ -24,7 +24,7 @@ code {
     align-items: center;
     justify-content: center;
     font-size: calc(10px + 2vmin);
-    color: white;
+    color: gray;
 }
 
 .App-link {
@@ -89,7 +89,7 @@ body {
   }
   
   .semicircle3 {
-    background-color: yellow;
+    background-color: blue;
     height: 160px;
     width: 320px;
     top: 20px;
@@ -109,7 +109,7 @@ body {
   }
   
   .semicircle5 {
-    background-color: blue;
+    background-color: yellow;
     height: 120px;
     width: 240px;
     top: 20px;
