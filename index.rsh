@@ -22,7 +22,7 @@ forall(UInt, playA =>
 const Player = {
   ...hasRandom,
   getHand: Fun([], UInt),
-  showOutcome: Fun([UInt], Null),
+  seeOutcome: Fun([UInt], Null),
 };
 
 export const main =
@@ -31,46 +31,66 @@ export const main =
     [Participant('Alice',
       {
         ...Player,
-        getParams: Fun([], Object({
-          wager: UInt,
-          deadline: UInt
-        }))
+        wager: UInt,
+        deadline: UInt,
       }),
     Participant('Bob',
       {
         ...Player,
-        confirmWager: Fun([UInt], Null)
+        acceptWager: Fun([UInt], Null)
       }),
     ],
     (Alice, Bob) => {
-      const showOutcome = (which) => () => {
+      const seeOutcome = (which) => () => {
         each([Alice, Bob], () =>
-          interact.showOutcome(which));
+          interact.seeOutcome(which));
       };
 
       Alice.only(() => {
-        const { wager, deadline } =
-          declassify(interact.getParams());
-        const handAlice = declassify(interact.getHand());
+        const wager = declassify(interact.wager);
+        const deadline = declassify(interact.deadline);
       });
-      Alice.publish(handAlice, wager, deadline)
+      Alice.publish(wager, deadline)
         .pay(wager);
       commit();
 
       Bob.only(() => {
+        interact.acceptWager(wager);
+      });
+      Bob.pay(wager)
+        .timeout(relativeTime(deadline), () => closeTo(Alice, seeOutcome(TIMEOUT)));
+      commit();
+
+      Alice.only(() => {
+        const _handAlice = interact.getHand();
+        const [_commitAlice, _saltAlice] = makeCommitment(interact, _handAlice);
+        const commitAlice = declassify(_commitAlice);
+      });
+      Alice.publish(commitAlice)
+        .timeout(relativeTime(deadline), () => closeTo(Bob, seeOutcome(TIMEOUT)));
+      commit();
+
+      unknowable(Bob, Alice(_handAlice, _saltAlice));
+      Bob.only(() => {
         const handBob = declassify(interact.getHand());
-        interact.confirmWager(wager);
       });
       Bob.publish(handBob)
-        .pay(wager)
-        .timeout(relativeTime(deadline), () => closeTo(Alice, showOutcome(TIMEOUT)));
+        .timeout(relativeTime(deadline), () => closeTo(Alice, seeOutcome(TIMEOUT)));
+      commit();
+
+      Alice.only(() => {
+        const saltAlice = declassify(_saltAlice);
+        const handAlice = declassify(_handAlice);
+      });
+      Alice.publish(saltAlice, handAlice)
+        .timeout(relativeTime(deadline), () => closeTo(Bob, seeOutcome(TIMEOUT)));
+      checkCommitment(commitAlice, saltAlice, handAlice);
       commit();
 
       // This wait is so that Bob doesn't have an advantage. Otherwise he'd be
       // able to include the last publish and the next one at the same time;
       // but with this protocol, now Alice can ensure that the race doesn't
       // start until she has enough time to know that Bob has accepted.
-      wait(relativeTime(deadline));
       Alice.only(() => {
         const outcome = winner(handAlice, handBob, someAnswerArr);
       });
@@ -83,5 +103,5 @@ export const main =
       const winwho = outcome == A_WINS ? Alice : Bob;
       transfer(balance()).to(winwho);
       commit();
-      showOutcome(outcome)();
+      seeOutcome(outcome)();
     });
