@@ -2,7 +2,7 @@
 'use strict';
 
 const [isColor, VIOLET, INDIGO, BLUE, GREEN, YELLOW, ORANGE, RED] = makeEnum(7);
-const [isOutcome, ALICE_WINS, BOB_WINS, NO_ONE, TIMEOUT] = makeEnum(5);
+const [isOutcome, A_WINS, B_WINS, NO_ONE, TIMEOUT] = makeEnum(4);
 
 const winner = (playA, playB, answerArr) => {
   if (answerArr.any(x => x == playA)) return A_WINS;
@@ -17,9 +17,10 @@ assert(winner(YELLOW, INDIGO, someAnswerArr) == A_WINS);
 
 forall(UInt, playA =>
   forall(UInt, playB =>
-      assert(isOutcome(winner(playA, playB, someAnswerArr)))));
+    assert(isOutcome(winner(playA, playB, someAnswerArr)))));
 
 const Player = {
+  ...hasRandom,
   getHand: Fun([], UInt),
   showOutcome: Fun([UInt], Null),
 };
@@ -28,29 +29,40 @@ export const main =
   Reach.App(
     {},
     [Participant('Alice',
-      { ...Player,
-        getParams: Fun([], Object({ wager: UInt,
-                                    deadline: UInt })) }),
-     Participant('Bob',
-      { ...Player,
-        confirmWager: Fun([UInt], Null) } ),
+      {
+        ...Player,
+        getParams: Fun([], Object({
+          wager: UInt,
+          deadline: UInt
+        }))
+      }),
+    Participant('Bob',
+      {
+        ...Player,
+        confirmWager: Fun([UInt], Null)
+      }),
     ],
     (Alice, Bob) => {
       const showOutcome = (which) => () => {
         each([Alice, Bob], () =>
-          interact.showOutcome(which)); };
+          interact.showOutcome(which));
+      };
 
       Alice.only(() => {
         const { wager, deadline } =
           declassify(interact.getParams());
+        const handAlice = declassify(interact.getHand());
       });
-      Alice.publish(wager, deadline)
+      Alice.publish(handAlice, wager, deadline)
         .pay(wager);
       commit();
 
       Bob.only(() => {
-        interact.confirmWager(wager); });
-      Bob.pay(wager)
+        const handBob = declassify(interact.getHand());
+        interact.confirmWager(wager);
+      });
+      Bob.publish(handBob)
+        .pay(wager)
         .timeout(relativeTime(deadline), () => closeTo(Alice, showOutcome(TIMEOUT)));
       commit();
 
@@ -59,15 +71,17 @@ export const main =
       // but with this protocol, now Alice can ensure that the race doesn't
       // start until she has enough time to know that Bob has accepted.
       wait(relativeTime(deadline));
-
       Alice.only(() => {
-        const outcome = ALICE_WINS; });
+        const outcome = winner(handAlice, handBob, someAnswerArr);
+      });
       Bob.only(() => {
-        const outcome = BOB_WINS; });
+        const outcome = winner(handAlice, handBob, someAnswerArr);
+      });
+
 
       race(Alice, Bob).publish(outcome);
-      const winner = outcome == ALICE_WINS ? Alice : Bob;
-      transfer(balance()).to(winner);
+      const winwho = outcome == A_WINS ? Alice : Bob;
+      transfer(balance()).to(winwho);
       commit();
       showOutcome(outcome)();
     });
