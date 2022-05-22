@@ -31,6 +31,7 @@ exports.SetWager = class extends React.Component {
                 /> {standardUnit}
                 <br />
                 <button
+                    class="custom-btn btn" 
                     onClick={() => parent.setWager(wager)}
                 >Set wager</button>
             </div>
@@ -46,6 +47,7 @@ exports.Deploy = class extends React.Component {
                 Wager (pay to deploy): <strong>{wager}</strong> {standardUnit}
                 <br />
                 <button
+                    class="custom-btn btn" 
                     onClick={() => parent.deploy()}
                 >Deploy</button>
             </div>
@@ -83,6 +85,7 @@ exports.WaitingForAttacher = class extends React.Component {
                     {ctcInfoStr}
                 </pre>
                 <button
+                    class="custom-btn btn" 
                     onClick={(e) => this.copyToClipboard(e.currentTarget)}
                 >Copy to clipboard</button>
             </div>

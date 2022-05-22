@@ -47,8 +47,8 @@ exports.FundAccount = class extends React.Component {
           placeholder={defaultFundAmt}
           onChange={(e) => this.setState({amt: e.currentTarget.value})}
         />
-        <button onClick={() => parent.fundAccount(amt)}>Fund Account</button>
-        <button onClick={() => parent.skipFundAccount()}>Skip</button>
+        <button class="custom-btn btn" onClick={() => parent.fundAccount(amt)}>Fund Account</button>
+        <button class="custom-btn btn" onClick={() => parent.skipFundAccount()}>Skip</button>
       </div>
     );
   }
@@ -63,12 +63,14 @@ exports.DeployerOrAttacher = class extends React.Component {
         <br />
         <p>
           <button
+            class="custom-btn btn" 
             onClick={() => parent.selectDeployer()}
           >Deployer</button>
           <br /> Set the wager, deploy the contract.
         </p>
         <p>
           <button
+            class="custom-btn btn" 
             onClick={() => parent.selectAttacher()}
           >Attacher</button>
           <br /> Attach to the Deployer's contract.

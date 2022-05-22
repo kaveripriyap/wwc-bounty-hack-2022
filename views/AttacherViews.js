@@ -30,7 +30,7 @@ exports.Attach = class extends React.Component {
                     placeholder='{}'
                 />
                 <br />
-                <button
+                <button class="custom-btn btn"
                     disabled={!ctcInfoStr}
                     onClick={() => parent.attach(ctcInfoStr)}
                 >Attach</button>
@@ -59,6 +59,7 @@ exports.AcceptTerms = class extends React.Component {
                 <br /> Wager: {wager} {standardUnit}
                 <br />
                 <button
+                    class="custom-btn btn" 
                     disabled={disabled}
                     onClick={() => {
                         this.setState({ disabled: true });
