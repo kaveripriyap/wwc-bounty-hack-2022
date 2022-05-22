@@ -87,17 +87,12 @@ export const main =
       checkCommitment(commitAlice, saltAlice, handAlice);
       commit();
 
-      // This wait is so that Bob doesn't have an advantage. Otherwise he'd be
-      // able to include the last publish and the next one at the same time;
-      // but with this protocol, now Alice can ensure that the race doesn't
-      // start until she has enough time to know that Bob has accepted.
       Alice.only(() => {
         const outcome = winner(handAlice, handBob, someAnswerArr);
       });
       Bob.only(() => {
         const outcome = winner(handAlice, handBob, someAnswerArr);
       });
-
 
       race(Alice, Bob).publish(outcome);
       const winwho = outcome == A_WINS ? Alice : Bob;
