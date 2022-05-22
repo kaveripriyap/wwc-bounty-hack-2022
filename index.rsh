@@ -73,10 +73,10 @@ export const main =
       const [winner, howMany] =
         parallelReduce([GM, 0])
           .invariant(balance() == howMany * wager)
-          .while(keepAccepting())
+          .while(keepAccepting() && winner == GM)
           .case(Kaavi,
             (() => ({
-              when: declassify(interact.getHand(question)) >= 0 && declassify(interact.getHand(question)) < 7,
+              when: winner == GM,
             })),
             ((_) => wager),
             ((_) => {
