@@ -24,6 +24,9 @@ const handToInt = {
     'VIOLET': 0, 'INDIGO': 1, 'BLUE': 2,
     'GREEN': 3, 'YELLOW': 4, 'ORANGE': 5, 'RED': 6
 };
+const intToColor = {
+    0: 'violet', 1: 'indigo', 2: 'blue', 3: 'green', 4: 'yellow', 5:'orange', 6: 'red',
+}
 const intToOutcome = ['A wins!', 'B wins!', 'No one wins!'];
 const { standardUnit } = reach;
 const defaults = { defaultFundAmt: '10', defaultWager: '1', standardUnit };
@@ -64,17 +67,23 @@ class GameMaster extends React.Component {
         [arr[toChange1], arr[toChange2]] = [arr[toChange2], arr[toChange1]];
         return arr;
     }
+    checkAnswer(answer) {
+        return true;
+    }
 }
 
 class Player extends React.Component {
     async getHand(question) { // Fun([Array(UInt, 7)], UInt)
+        const colors = question.map(num => {
+            return intToColor[num];
+        });
         const hand = await new Promise(resolveHandP => {
-            this.setState({ view: 'GetHand', playable: true, resolveHandP, question: question });
+            this.setState({ view: 'GetHand', playable: true, resolveHandP, colors: colors });
         });
         this.setState({ view: 'WaitingForResults', hand });
         return handToInt[hand];
     }
-    seeOutcome(i) { this.setState({ view: 'Done', outcome: intToOutcome[i] }); }
+    seeOutcome(winner) { this.setState({ view: 'Done', outcome: winner }); }
     // informTimeout() { this.setState({ view: 'Timeout' }); }
     playHand(hand) { this.state.resolveHandP(hand); }
 }

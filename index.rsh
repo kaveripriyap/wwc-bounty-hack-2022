@@ -98,13 +98,6 @@ export const main =
             Anybody.publish();
             return [GM, howMany];
           });
-      commit();
-
-      Kaavi.only(() => {
-        const itsame = winner == this;
-      });
-      Kaavi.publish().when(itsame)
-        .timeout(relativeTime(deadline), () => closeTo(GM, () => { }));
 
       transfer(balance()).to(winner);
       commit();

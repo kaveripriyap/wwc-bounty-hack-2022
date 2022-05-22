@@ -7,7 +7,11 @@ const exports = {};
 
 exports.GetHand = class extends React.Component {
     render() {
-        const { parent, playable, hand, question } = this.props;
+        const { parent, playable, hand, colors } = this.props;
+        var elements = document.getElementsByClassName('container');
+        for(var i=0; i < elements.length; i++){
+            elements[i].style.backgroundColor = colors[i];
+        }        
         return (
             <div>
                 {hand ? 'No one won! Pick another color.' : ''}
@@ -16,7 +20,7 @@ exports.GetHand = class extends React.Component {
                 <br />
                 <div class="container">
                     <div class="semicircle1">
-                        <div id="s2" class="semicircle2">
+                        <div id="s2" class="semicircle2" style={{backgroundColor: red}}>
                         <div id="s3" class="semicircle3">
                             <div id="s4" class="semicircle4">
                             <div id="s5" class="semicircle5">
@@ -32,18 +36,9 @@ exports.GetHand = class extends React.Component {
                         </div>
                     </div>
                 </div>
-                <script>
-                    function initialiseQuestion() {
-                        var elements = document.getElementsByClassName('container');
-                        for(var i=0; i < elements.length; i++){
-                            elements[i].style.backgroundColor = question[i];
-                        }
-                    }
-                </script>
-                
                 <div class="container text-center">
                 <p class="">
-                    {question.map( item => `${item} ` ).join('')}
+                    {colors.map( item => `${item} ` ).join('')}
                 </p>
                 <h3 class=""> Choose the 
                     <span class="a">r</span>
