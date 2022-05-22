@@ -16,13 +16,13 @@ exports.GetHand = class extends React.Component {
                 <br />
                 <div class="container">
                     <div class="semicircle1">
-                        <div class="semicircle2">
-                        <div class="semicircle3">
-                            <div class="semicircle4">
-                            <div class="semicircle5">
-                                <div class="semicircle6">
-                                <div class="semicircle7">
-                                    <div class="semicircle8">
+                        <div id="s2" class="semicircle2">
+                        <div id="s3" class="semicircle3">
+                            <div id="s4" class="semicircle4">
+                            <div id="s5" class="semicircle5">
+                                <div id="s6" class="semicircle6">
+                                <div id="s7" class="semicircle7">
+                                    <div id="s8" class="semicircle8">
                                     </div>
                                 </div>
                                 </div>
@@ -32,6 +32,15 @@ exports.GetHand = class extends React.Component {
                         </div>
                     </div>
                 </div>
+                <script>
+                    function initialiseQuestion() {
+                        var elements = document.getElementsByClassName('container');
+                        for(var i=0; i < elements.length; i++){
+                            elements[i].style.backgroundColor = question[i];
+                        }
+                    }
+                </script>
+                
                 <div class="container text-center">
                 <p class="">
                     {question.map( item => `${item} ` ).join('')}
