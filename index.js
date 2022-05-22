@@ -54,21 +54,32 @@ class App extends React.Component {
     render() { return renderView(this, AppViews); }
 }
 
-class Player extends React.Component {
+class GameMaster extends React.Component {
     random() { return reach.hasRandom.random(); }
-    async getHand() { // Fun([], UInt)
+    seeOutcome(i) { this.setState({ view: 'Done', outcome: intToOutcome[i] }); }
+    getQuestion() {
+        const toChange1 = Math.floor(Math.random() * 7);
+        const toChange2 = Math.floor(Math.random() * 7);
+        const arr = Array.from(Array(7).keys());
+        [arr[toChange1], arr[toChange2]] = [arr[toChange2], arr[toChange1]];
+        return arr;
+    }
+}
+
+class Player extends React.Component {
+    async getHand(question) { // Fun([Array(UInt, 7)], UInt)
         const hand = await new Promise(resolveHandP => {
-            this.setState({ view: 'GetHand', playable: true, resolveHandP });
+            this.setState({ view: 'GetHand', playable: true, resolveHandP, question: question });
         });
         this.setState({ view: 'WaitingForResults', hand });
         return handToInt[hand];
     }
     seeOutcome(i) { this.setState({ view: 'Done', outcome: intToOutcome[i] }); }
-    informTimeout() { this.setState({ view: 'Timeout' }); }
-    playHand(hand) { this.state.resolveHandP(hand); }
+    // informTimeout() { this.setState({ view: 'Timeout' }); }
+    // playHand(hand) { this.state.resolveHandP(hand); }
 }
 
-class Deployer extends Player {
+class Deployer extends GameMaster {
     constructor(props) {
         super(props);
         this.state = { view: 'SetWager' };
@@ -79,7 +90,7 @@ class Deployer extends Player {
         this.setState({ view: 'Deploying', ctc });
         this.wager = reach.parseCurrency(this.state.wager); // UInt
         this.deadline = { ETH: 10, ALGO: 100, CFX: 1000 }[reach.connector]; // UInt
-        backend.Alice(ctc, this);
+        backend.GM(ctc, this);
         const ctcInfoStr = JSON.stringify(await ctc.getInfo());
         this.setState({ view: 'WaitingForAttacher', ctcInfoStr });
     }
@@ -93,7 +104,7 @@ class Attacher extends Player {
     attach(ctcInfoStr) {
         const ctc = this.props.acc.contract(backend, JSON.parse(ctcInfoStr));
         this.setState({ view: 'Attaching' });
-        backend.Bob(ctc, this);
+        backend.Kaavi(ctc, this);
     }
     async acceptWager(wagerAtomic) { // Fun([UInt], Null)
         const wager = reach.formatCurrency(wagerAtomic, 4);

@@ -7,7 +7,7 @@ const exports = {};
 
 exports.GetHand = class extends React.Component {
     render() {
-        const { parent, playable, hand } = this.props;
+        const { parent, playable, hand, question } = this.props;
         return (
             <div>
                 {hand ? 'No one won! Pick another color.' : ''}
@@ -33,6 +33,9 @@ exports.GetHand = class extends React.Component {
                     </div>
                 </div>
                 <div class="container text-center">
+                <p class="">
+                    {question.map( item => `${item} ` ).join('')}
+                </p>
                 <h3 class=""> Choose the 
                     <span class="a">r</span>
                     <span class="b">a</span>

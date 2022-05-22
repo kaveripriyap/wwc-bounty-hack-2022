@@ -2,106 +2,108 @@
 'use strict';
 
 const [isColor, VIOLET, INDIGO, BLUE, GREEN, YELLOW, ORANGE, RED] = makeEnum(7);
-const [isOutcome, A_WINS, B_WINS, NO_ONE, TIMEOUT] = makeEnum(4);
+const [isOutcome, CORRECT, WRONG, TIMEOUT] = makeEnum(3);
 
-const winner = (playA, playB, answerArr) => {
-  if (answerArr.any(x => x == playA)) return A_WINS;
-  else if (answerArr.any(x => x == playB)) return B_WINS;
-  else return NO_ONE;
+const isWinner = (play, answerArr) => {
+  if (answerArr.any(x => x == play)) return CORRECT;
+  else return WRONG;
 };
 
 const someAnswerArr = array(UInt, [GREEN, YELLOW]);
-assert(winner(VIOLET, INDIGO, someAnswerArr) == NO_ONE);
-assert(winner(VIOLET, GREEN, someAnswerArr) == B_WINS);
-assert(winner(YELLOW, INDIGO, someAnswerArr) == A_WINS);
+assert(isWinner(VIOLET, someAnswerArr) == WRONG);
+assert(isWinner(GREEN, someAnswerArr) == CORRECT);
 
-forall(UInt, playA =>
-  forall(UInt, playB =>
-    assert(isOutcome(winner(playA, playB, someAnswerArr)))));
+forall(UInt, play =>
+  assert(isOutcome(isWinner(play, someAnswerArr))));
+
+const Common = {
+  seeOutcome: Fun([Address], Null),
+}
+
+const GameMaster = {
+  ...hasRandom,
+  ...Common,
+  getQuestion: Fun([], Array(UInt, 7)),
+  checkAnswer: Fun([UInt], Bool),
+  wager: UInt,
+  deadline: UInt,
+}
 
 const Player = {
-  ...hasRandom,
-  getHand: Fun([], UInt),
-  seeOutcome: Fun([UInt], Null),
+  ...Common,
+  getHand: Fun([Array(UInt, 7)], UInt),
+  acceptWager: Fun([UInt], Null),
 };
 
 export const main =
   Reach.App(
     {},
-    [Participant('Alice',
-      {
-        ...Player,
-        wager: UInt,
-        deadline: UInt,
-      }),
-    Participant('Bob',
-      {
-        ...Player,
-        acceptWager: Fun([UInt], Null)
-      }),
+    [
+      Participant('GM', { ...GameMaster }),
+      ParticipantClass('Kaavi',
+        {
+          ...Player,
+          acceptWager: Fun([UInt], Null)
+        }),
     ],
-    (Alice, Bob) => {
+    (GM, Kaavi) => {
       const seeOutcome = (which) => () => {
-        each([Alice, Bob], () =>
+        each([GM, Kaavi], () =>
           interact.seeOutcome(which));
       };
 
-      Alice.only(() => {
+      GM.publish();
+      commit();
+
+      GM.only(() => {
         const wager = declassify(interact.wager);
         const deadline = declassify(interact.deadline);
+        const question = declassify(interact.getQuestion());
       });
-      Alice.publish(wager, deadline)
-        .pay(wager);
-      commit();
+      GM.publish(wager, deadline, question);
 
-      Bob.only(() => {
+      Kaavi.only(() => {
         interact.acceptWager(wager);
       });
-      Bob.pay(wager)
-        .timeout(relativeTime(deadline), () => closeTo(Alice, seeOutcome(TIMEOUT)));
+      commit();
+      Kaavi.publish();
+
+      const [timeRemaining, keepGoing] = makeDeadline(deadline);
+
+      const [ winner, numOfPlayers ] =
+        parallelReduce([ GM, 0])
+          .invariant(balance() == numOfPlayers * wager)
+          .while(keepGoing())
+          .case(Kaavi,
+            (() => ({
+              when: declassify(interact.getHand(question)) >= 0 && declassify(interact.getHand(question)) < 7,
+              msg: declassify(interact.getHand(question)),
+            })),
+            ((_) => wager),
+            ((hand) => {
+              const kaavi = this;
+
+              GM.only(() => {
+                const isCorrect = declassify(interact.checkAnswer(hand));
+              });
+              commit();
+              GM.publish(isCorrect);
+              const outcome = isCorrect ? kaavi : winner;
+              return [outcome, numOfPlayers + 1];
+            }))
+          .timeout(timeRemaining(), () => {
+            Anybody.publish();
+            return [GM, numOfPlayers];
+          });
       commit();
 
-      Alice.only(() => {
-        const _handAlice = interact.getHand();
-        const [_commitAlice, _saltAlice] = makeCommitment(interact, _handAlice);
-        const commitAlice = declassify(_commitAlice);
+      Kaavi.only(() => {
+        const itsame = winner == this;
       });
-      Alice.publish(commitAlice)
-        .timeout(relativeTime(deadline), () => closeTo(Bob, seeOutcome(TIMEOUT)));
+      Kaavi.publish().when(itsame)
+        .timeout(relativeTime(deadline), () => closeTo(GM, () => { }));
+
+      transfer(balance()).to(winner);
       commit();
-
-      unknowable(Bob, Alice(_handAlice, _saltAlice));
-      Bob.only(() => {
-        const handBob = declassify(interact.getHand());
-      });
-      Bob.publish(handBob)
-        .timeout(relativeTime(deadline), () => closeTo(Alice, seeOutcome(TIMEOUT)));
-      commit();
-
-      Alice.only(() => {
-        const saltAlice = declassify(_saltAlice);
-        const handAlice = declassify(_handAlice);
-      });
-      Alice.publish(saltAlice, handAlice)
-        .timeout(relativeTime(deadline), () => closeTo(Bob, seeOutcome(TIMEOUT)));
-      checkCommitment(commitAlice, saltAlice, handAlice);
-      commit();
-
-      // This wait is so that Bob doesn't have an advantage. Otherwise he'd be
-      // able to include the last publish and the next one at the same time;
-      // but with this protocol, now Alice can ensure that the race doesn't
-      // start until she has enough time to know that Bob has accepted.
-      Alice.only(() => {
-        const outcome = winner(handAlice, handBob, someAnswerArr);
-      });
-      Bob.only(() => {
-        const outcome = winner(handAlice, handBob, someAnswerArr);
-      });
-
-
-      race(Alice, Bob).publish(outcome);
-      const winwho = outcome == A_WINS ? Alice : Bob;
-      transfer(balance()).to(winwho);
-      commit();
-      seeOutcome(outcome)();
+      seeOutcome(winner)();
     });
