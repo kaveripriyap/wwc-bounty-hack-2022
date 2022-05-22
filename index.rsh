@@ -69,6 +69,7 @@ export const main =
       Kaavi.publish();
 
       const [timeRemaining, keepGoing] = makeDeadline(deadline);
+      const [answerTime, keepAccepting] = makeDeadline(2 * deadline);
 
       const [ winner, numOfPlayers ] =
         parallelReduce([ GM, 0])
