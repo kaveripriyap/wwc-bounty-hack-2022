@@ -9,7 +9,7 @@ exports.Wrapper = class extends React.Component {
         return (
             <div className="Attacher">
                 <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,600,800&display=swap" rel="stylesheet"></link>
-                <h2 class="rainbow-text">Attacher (Kinnu)</h2>
+                <h2 class="rainbow-text">Attacher (Player)</h2>
                 {content}
             </div>
         );
@@ -74,7 +74,7 @@ exports.WaitingForTurn = class extends React.Component {
     render() {
         return (
             <div>
-                Waiting for the other player...
+                Waiting for the game to start...
                 <br />Think about which color you want to choose. :)
             </div>
         );

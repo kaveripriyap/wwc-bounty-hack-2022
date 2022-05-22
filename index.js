@@ -28,7 +28,7 @@ const handToInt = {
 const intToColor = {
     0: 'violet', 1: 'indigo', 2: 'blue', 3: 'green', 4: 'yellow', 5:'orange', 6: 'red',
 }
-const intToOutcome = ['Wins!', 'Loses!', 'Timeout.'];
+const intToOutcome = ['You win!', 'You lose!', 'Timeout.'];
 const { standardUnit } = reach;
 const defaults = { defaultFundAmt: '10', defaultWager: '1', standardUnit };
 

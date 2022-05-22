@@ -11,7 +11,7 @@ exports.Wrapper = class extends React.Component {
         return (
             <div className="Deployer">
                 <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,600,800&display=swap" rel="stylesheet"></link>
-                <h2 class="rainbow-text">Deployer (Kaavi)</h2>
+                <h2 class="rainbow-text">Deployer (GameMain)</h2>
                 {content}
             </div>
         );
@@ -77,7 +77,7 @@ exports.WaitingForAttacher = class extends React.Component {
         const { ctcInfoStr } = this.props;
         return (
             <div>
-                Waiting for Kinnu to join...
+                Waiting for Player to join...
                 <br /> Please give them this contract info:
                 <pre className='ContractInfo'>
                     {ctcInfoStr}
