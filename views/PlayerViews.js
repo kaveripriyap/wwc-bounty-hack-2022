@@ -41,7 +41,7 @@ exports.GetHand = class extends React.Component {
                         <span class="e">b</span>
                         <span class="f">o</span>
                         <span class="a">w</span>
-                        color that was switched! </h3>
+                        color that was switched, look carefully! </h3>
                 </div>
                 <button class="rainbow rainbow-1"
                     disabled={!playable}

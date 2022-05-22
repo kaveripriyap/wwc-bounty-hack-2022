@@ -23,10 +23,10 @@ reach.setWalletFallback(reach.walletFallback({
 const isColor = ['violet', 'indigo', 'blue', 'green', 'yellow', 'orange', 'red'];
 const handToInt = {
     'VIOLET': 0, 'INDIGO': 1, 'BLUE': 2,
-    'GREEN': 3, 'YELLOW': 4, 'ORANGE': 5, 'RED': 6
+    'GREEN': 3, 'YELLOW': 4, 'ORANGE': 5, 'RED': 6, 'DEFAULT': 7,
 };
 const intToColor = {
-    0: 'violet', 1: 'indigo', 2: 'blue', 3: 'green', 4: 'yellow', 5:'orange', 6: 'red',
+    0: 'violet', 1: 'indigo', 2: 'blue', 3: 'green', 4: 'yellow', 5: 'orange', 6: 'red',
 }
 const intToOutcome = ['Alice wins!', 'Bob wins', 'Both lose!', 'Timeout.'];
 const { standardUnit } = reach;
@@ -87,6 +87,7 @@ class Player extends React.Component {
     seeOutcome(i) { this.setState({ view: 'Done', outcome: intToOutcome[i] }); }
     informTimeout() { this.setState({ view: 'Timeout' }); }
     playHand(hand) { this.state.resolveHandP(hand); }
+    play() { this.state.resolveHandP('DEFAULT'); }
     checkAnswer(answer, question) {
         console.log(intToColor[question[answer]]);
         console.log(isColor[answer]);

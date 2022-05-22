@@ -21,6 +21,7 @@ const Player = {
   getHand: Fun([Array(UInt, 7)], UInt),
   checkAnswer: Fun([UInt, Array(UInt, 7)], Bool),
   acceptWager: Fun([UInt], Null),
+  play: Fun([], Null),
 };
 
 export const main =
