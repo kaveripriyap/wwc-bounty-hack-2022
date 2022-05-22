@@ -28,7 +28,7 @@ const handToInt = {
 const intToColor = {
     0: 'violet', 1: 'indigo', 2: 'blue', 3: 'green', 4: 'yellow', 5:'orange', 6: 'red',
 }
-const intToOutcome = ['You win!', 'You lose!', 'Timeout.'];
+const intToOutcome = ['Alice wins!', 'Bob wins', 'Both lose!', 'Timeout.'];
 const { standardUnit } = reach;
 const defaults = { defaultFundAmt: '10', defaultWager: '1', standardUnit };
 
@@ -53,7 +53,8 @@ class App extends React.Component {
         this.setState({ view: 'DeployerOrAttacher' });
     }
     async skipFundAccount() { this.setState({ view: 'DeployerOrAttacher' }); }
-    selectAttacher() { this.setState({ view: 'Wrapper', ContentView: Attacher }); }
+    selectAliceAttacher() { this.setState({ view: 'Wrapper', ContentView: AliceAttacher }); }
+    selectBobAttacher() { this.setState({ view: 'Wrapper', ContentView: BobAttacher }); }
     selectDeployer() { this.setState({ view: 'Wrapper', ContentView: Deployer }); }
     render() { return renderView(this, AppViews); }
 }
@@ -89,7 +90,9 @@ class Player extends React.Component {
     checkAnswer(answer, question) {
         console.log(intToColor[question[answer]]);
         console.log(isColor[answer]);
-        return intToColor[question[answer]] != isColor[answer];
+        const isCorrect = intToColor[question[answer]] != isColor[answer];
+        console.log(isCorrect);
+        return isCorrect;
     }
 }
 
@@ -110,7 +113,29 @@ class Deployer extends GameM {
     }
     render() { return renderView(this, DeployerViews); }
 }
-class Attacher extends Player {
+class AliceAttacher extends Player {
+    constructor(props) {
+        super(props);
+        this.state = { view: 'Attach' };
+    }
+    attach(ctcInfoStr) {
+        const ctc = this.props.acc.contract(backend, JSON.parse(ctcInfoStr));
+        this.setState({ view: 'Attaching' });
+        backend.Alice(ctc, this);
+    }
+    async acceptWager(wagerAtomic) { // Fun([UInt], Null)
+        const wager = reach.formatCurrency(wagerAtomic, 4);
+        return await new Promise(resolveAcceptedP => {
+            this.setState({ view: 'AcceptTerms', wager, resolveAcceptedP });
+        });
+    }
+    termsAccepted() {
+        this.state.resolveAcceptedP();
+        this.setState({ view: 'WaitingForTurn' });
+    }
+    render() { return renderView(this, AttacherViews); }
+}
+class BobAttacher extends Player {
     constructor(props) {
         super(props);
         this.state = { view: 'Attach' };

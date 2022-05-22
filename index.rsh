@@ -2,17 +2,7 @@
 'use strict';
 
 const [isColor, VIOLET, INDIGO, BLUE, GREEN, YELLOW, ORANGE, RED] = makeEnum(7);
-const [isOutcome, B_WINS, B_LOSES, TIMEOUT] = makeEnum(3);
-
-const winner = (play, question) => {
-  const isCorrect = question[play] != play;
-  if (isCorrect) return B_WINS;
-  else return B_LOSES;
-};
-
-const someAnswerArr = array(UInt, [VIOLET, INDIGO, BLUE, YELLOW, GREEN, ORANGE, RED]);
-assert(winner(GREEN, someAnswerArr) == B_WINS);
-assert(winner(INDIGO, someAnswerArr) == B_LOSES);
+const [isOutcomeA, A_WINS, B_WINS, LOSS, TIMEOUT] = makeEnum(4);
 
 const Common = {
   seeOutcome: Fun([UInt], Null),
@@ -37,11 +27,12 @@ export const main =
   Reach.App(
     {},
     [Participant('GameMain', GameM),
+    Participant('Alice', Player),
     Participant('Bob', Player),
     ],
-    (GameMain, Bob) => {
+    (GameMain, Alice, Bob) => {
       const seeOutcome = (which) => () => {
-        each([GameMain, Bob], () =>
+        each([GameMain, Alice, Bob], () =>
           interact.seeOutcome(which));
       };
 
@@ -53,29 +44,42 @@ export const main =
       GameMain.publish(wager, deadline, question);
       commit();
 
+      Alice.only(() => {
+        interact.acceptWager(wager);
+      });
+      Alice.pay(wager)
+        .timeout(relativeTime(deadline), () => closeTo(GameMain, seeOutcome(TIMEOUT)));
+      commit();
+
       Bob.only(() => {
         interact.acceptWager(wager);
       });
       Bob.pay(wager)
         .timeout(relativeTime(deadline), () => closeTo(GameMain, seeOutcome(TIMEOUT)));
 
-      var outcome = B_LOSES;
-      invariant(balance() == wager);
-      while (outcome == B_LOSES) {
+      var outcome = LOSS;
+      invariant(balance() == 2 * wager);
+      while (outcome == LOSS) {
         commit();
+
+        Alice.only(() => {
+          const handAlice = declassify(interact.getHand(question));
+          const isCorrectAlice = declassify(interact.checkAnswer(handAlice, question));
+          const outc = isCorrectAlice ? A_WINS : LOSS;
+        });
 
         Bob.only(() => {
           const handBob = declassify(interact.getHand(question));
-          const isCorrect = declassify(interact.checkAnswer(handBob, question));
+          const isCorrectBob = declassify(interact.checkAnswer(handBob, question));
+          const outc = isCorrectBob ? B_WINS : LOSS;
         });
-        Bob.publish(handBob, isCorrect)
-          .timeout(relativeTime(deadline), () => closeTo(GameMain, seeOutcome(TIMEOUT)));
 
-        outcome = isCorrect ? B_WINS : B_LOSES;
+        race(Alice, Bob).publish(outc);
+        outcome = outc;
         continue;
       }
 
-      const winwho = outcome == B_WINS ? Bob : GameMain;
+      const winwho = outcome == A_WINS ? Alice : Bob;
       transfer(balance()).to(winwho);
       commit();
       seeOutcome(outcome)();
