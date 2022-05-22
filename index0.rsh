@@ -22,7 +22,8 @@ const BuyerInterface = {
     showAnswers: Fun([Address, Array(UInt, 2)], Null),
 };
 
-export const main = Reach.App(() => {
+export const main = 
+  Reach.App(() => {
     const Funder = Participant('Funder', FunderInterface);
     const Buyer = ParticipantClass('Buyer', BuyerInterface);
     init();
@@ -87,7 +88,7 @@ export const main = Reach.App(() => {
     transfer(balance()).to(Sponsor);
     commit();
 
-    each([Sponsor, Bidder], () => {
+    each([Funder, Buyer], () => {
         interact.showWinner(true, winner, winningBid);
     });
 });
