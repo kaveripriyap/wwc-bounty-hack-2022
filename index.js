@@ -20,11 +20,15 @@ reach.setWalletFallback(reach.walletFallback({
     }, MyAlgoConnect
 }));
 
+const isColor = ['violet', 'indigo', 'blue', 'green', 'yellow', 'orange', 'red'];
 const handToInt = {
     'VIOLET': 0, 'INDIGO': 1, 'BLUE': 2,
     'GREEN': 3, 'YELLOW': 4, 'ORANGE': 5, 'RED': 6
 };
-const intToOutcome = ['A wins!', 'B wins!', 'No one wins!'];
+const intToColor = {
+    0: 'violet', 1: 'indigo', 2: 'blue', 3: 'green', 4: 'yellow', 5:'orange', 6: 'red',
+}
+const intToOutcome = ['Wins!', 'Loses!', 'Timeout.'];
 const { standardUnit } = reach;
 const defaults = { defaultFundAmt: '10', defaultWager: '1', standardUnit };
 
@@ -54,11 +58,27 @@ class App extends React.Component {
     render() { return renderView(this, AppViews); }
 }
 
+class GameM extends React.Component {
+    random() { return reach.hasRandom.random(); }
+    seeOutcome(i) { this.setState({ view: 'Done', outcome: intToOutcome[i] }); }
+    getQuestion() {
+        const toChange1 = Math.floor(Math.random() * 7);
+        const toChange2 = Math.floor(Math.random() * 7);
+        const arr = Array.from(Array(7).keys());
+        [arr[toChange1], arr[toChange2]] = [arr[toChange2], arr[toChange1]];
+        return arr;
+    }
+}
+
 class Player extends React.Component {
     random() { return reach.hasRandom.random(); }
-    async getHand() { // Fun([], UInt)
+    async getHand(question) { // Fun([], UInt)
+        const colors = question.map(num => {
+            return intToColor[num];
+        });
+        console.log(colors);
         const hand = await new Promise(resolveHandP => {
-            this.setState({ view: 'GetHand', playable: true, resolveHandP });
+            this.setState({ view: 'GetHand', playable: true, resolveHandP, colors: colors });
         });
         this.setState({ view: 'WaitingForResults', hand });
         return handToInt[hand];
@@ -66,9 +86,14 @@ class Player extends React.Component {
     seeOutcome(i) { this.setState({ view: 'Done', outcome: intToOutcome[i] }); }
     informTimeout() { this.setState({ view: 'Timeout' }); }
     playHand(hand) { this.state.resolveHandP(hand); }
+    checkAnswer(answer, question) {
+        console.log(intToColor[question[answer]]);
+        console.log(isColor[answer]);
+        return intToColor[question[answer]] != isColor[answer];
+    }
 }
 
-class Deployer extends Player {
+class Deployer extends GameM {
     constructor(props) {
         super(props);
         this.state = { view: 'SetWager' };
@@ -79,7 +104,7 @@ class Deployer extends Player {
         this.setState({ view: 'Deploying', ctc });
         this.wager = reach.parseCurrency(this.state.wager); // UInt
         this.deadline = { ETH: 10, ALGO: 100, CFX: 1000 }[reach.connector]; // UInt
-        backend.Alice(ctc, this);
+        backend.GameMain(ctc, this);
         const ctcInfoStr = JSON.stringify(await ctc.getInfo());
         this.setState({ view: 'WaitingForAttacher', ctcInfoStr });
     }

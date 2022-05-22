@@ -7,41 +7,41 @@ const exports = {};
 
 exports.GetHand = class extends React.Component {
     render() {
-        const { parent, playable, hand } = this.props;
+        const { parent, playable, hand, colors } = this.props;
         return (
             <div>
-                {hand ? 'No one won! Pick another color.' : ''}
+                {hand ? 'You lost, sorry! Try again.' : ''}
                 <br />
                 {!playable ? 'Please wait...' : ''}
                 <br />
                 <div class="container">
-                    <div class="semicircle1">
-                        <div class="semicircle2">
-                        <div class="semicircle3">
-                            <div class="semicircle4">
-                            <div class="semicircle5">
-                                <div class="semicircle6">
-                                <div class="semicircle7">
-                                    <div class="semicircle8">
+                    <div class="semicircle1" style={{ backgroundColor: colors[0] }}>
+                        <div id="s2" class="semicircle2" style={{ backgroundColor: colors[1] }}>
+                            <div id="s3" class="semicircle3" style={{ backgroundColor: colors[2] }}>
+                                <div id="s4" class="semicircle4" style={{ backgroundColor: colors[3] }}>
+                                    <div id="s5" class="semicircle5" style={{ backgroundColor: colors[4] }}>
+                                        <div id="s6" class="semicircle6" style={{ backgroundColor: colors[5] }}>
+                                            <div id="s7" class="semicircle7" style={{ backgroundColor: colors[6] }}>
+                                                <div class="semicircle8">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                </div>
                             </div>
-                            </div>
-                        </div>
                         </div>
                     </div>
                 </div>
                 <div class="container text-center">
-                <h3 class=""> Choose the 
-                    <span class="a">r</span>
-                    <span class="b">a</span>
-                    <span class="c">i</span>
-                    <span class="d">n</span>
-                    <span class="e">b</span>
-                    <span class="f">o</span>
-                    <span class="a">w</span> 
-                    color that was switched! </h3>
+                    <h3 class=""> Choose the
+                        <span class="a">r</span>
+                        <span class="b">a</span>
+                        <span class="c">i</span>
+                        <span class="d">n</span>
+                        <span class="e">b</span>
+                        <span class="f">o</span>
+                        <span class="a">w</span>
+                        color that was switched! </h3>
                 </div>
                 <button class="rainbow rainbow-1"
                     disabled={!playable}
