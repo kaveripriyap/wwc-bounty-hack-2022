@@ -52,31 +52,31 @@ exports.GetHand = class extends React.Component {
                 </div>
                 <button class="rainbow rainbow-1"
                     disabled={!playable}
-                    onClick={() => parent.playHand('VIOLET')}
+                    onClick={() => parent.playHand(0)}
                 >Violet</button>
                 <button class="rainbow rainbow-2"
                     disabled={!playable}
-                    onClick={() => parent.playHand('INDIGO')}
+                    onClick={() => parent.playHand(1)}
                 >Indigo</button>
                 <button class="rainbow rainbow-3"
                     disabled={!playable}
-                    onClick={() => parent.playHand('BLUE')}
+                    onClick={() => parent.playHand(2)}
                 >Blue</button>
                 <button class="rainbow rainbow-4"
                     disabled={!playable}
-                    onClick={() => parent.playHand('GREEN')}
+                    onClick={() => parent.playHand(3)}
                 >Green</button>
                 <button class="rainbow rainbow-5"
                     disabled={!playable}
-                    onClick={() => parent.playHand('YELLOW')}
+                    onClick={() => parent.playHand(4)}
                 >Yellow</button>
                 <button class="rainbow rainbow-6"
                     disabled={!playable}
-                    onClick={() => parent.playHand('ORANGE')}
+                    onClick={() => parent.playHand(5)}
                 >Orange</button>
                 <button class="rainbow rainbow-7"
                     disabled={!playable}
-                    onClick={() => parent.playHand('RED')}
+                    onClick={() => parent.playHand(6)}
                 >Red</button>
 
             </div>

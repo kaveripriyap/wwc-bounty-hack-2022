@@ -86,13 +86,13 @@ export const main =
               });
               commit();
               Kaavi.publish(hand);
-              GM.only(() => {
+              /*GM.only(() => {
                 const isCorrect = declassify(interact.checkAnswer(hand));
               });
               commit();
               GM.publish(isCorrect);
-              const outcome = isCorrect ? kaavi : winner;
-              return [outcome, howMany + 1];
+              const outcome = isCorrect ? kaavi : winner;*/
+              return [kaavi, howMany + 1];
             }))
           .timeout(answerTime(), () => {
             Anybody.publish();

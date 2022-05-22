@@ -81,7 +81,7 @@ class Player extends React.Component {
             this.setState({ view: 'GetHand', playable: true, resolveHandP, colors: colors });
         });
         this.setState({ view: 'WaitingForResults', hand });
-        return handToInt[hand];
+        return hand;
     }
     seeOutcome(winner) { this.setState({ view: 'Done', outcome: winner }); }
     // informTimeout() { this.setState({ view: 'Timeout' }); }
