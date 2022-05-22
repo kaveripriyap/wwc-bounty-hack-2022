@@ -76,7 +76,7 @@ class Player extends React.Component {
     }
     seeOutcome(i) { this.setState({ view: 'Done', outcome: intToOutcome[i] }); }
     // informTimeout() { this.setState({ view: 'Timeout' }); }
-    // playHand(hand) { this.state.resolveHandP(hand); }
+    playHand(hand) { this.state.resolveHandP(hand); }
 }
 
 class Deployer extends GameMaster {

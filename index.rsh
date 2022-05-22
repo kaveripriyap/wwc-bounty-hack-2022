@@ -68,33 +68,35 @@ export const main =
       commit();
       Kaavi.publish();
 
-      const [timeRemaining, keepGoing] = makeDeadline(deadline);
       const [answerTime, keepAccepting] = makeDeadline(2 * deadline);
 
-      const [ winner, numOfPlayers ] =
-        parallelReduce([ GM, 0])
-          .invariant(balance() == numOfPlayers * wager)
-          .while(keepGoing())
+      const [winner, howMany] =
+        parallelReduce([GM, 0])
+          .invariant(balance() == howMany * wager)
+          .while(keepAccepting())
           .case(Kaavi,
             (() => ({
               when: declassify(interact.getHand(question)) >= 0 && declassify(interact.getHand(question)) < 7,
-              msg: declassify(interact.getHand(question)),
             })),
             ((_) => wager),
-            ((hand) => {
+            ((_) => {
               const kaavi = this;
-
+              Kaavi.only(() => {
+                const hand = declassify(interact.getHand(question));
+              });
+              commit();
+              Kaavi.publish(hand);
               GM.only(() => {
                 const isCorrect = declassify(interact.checkAnswer(hand));
               });
               commit();
               GM.publish(isCorrect);
               const outcome = isCorrect ? kaavi : winner;
-              return [outcome, numOfPlayers + 1];
+              return [outcome, howMany + 1];
             }))
-          .timeout(timeRemaining(), () => {
+          .timeout(answerTime(), () => {
             Anybody.publish();
-            return [GM, numOfPlayers];
+            return [GM, howMany];
           });
       commit();
 
