@@ -19,13 +19,13 @@ exports.GetHand = class extends React.Component {
                 {!playable ? 'Please wait...' : ''}
                 <br />
                 <div class="container">
-                    <div class="semicircle1">
-                        <div id="s2" class="semicircle2" style={{backgroundColor: red}}>
-                        <div id="s3" class="semicircle3">
-                            <div id="s4" class="semicircle4">
-                            <div id="s5" class="semicircle5">
-                                <div id="s6" class="semicircle6">
-                                <div id="s7" class="semicircle7">
+                    <div class="semicircle1" style={{backgroundColor: colors[0]}}>
+                        <div id="s2" class="semicircle2" style={{backgroundColor: colors[1]}}>
+                        <div id="s3" class="semicircle3" style={{backgroundColor: colors[2]}}>
+                            <div id="s4" class="semicircle4" style={{backgroundColor: colors[3]}}>
+                            <div id="s5" class="semicircle5" style={{backgroundColor: colors[4]}}>
+                                <div id="s6" class="semicircle6" style={{backgroundColor: colors[5]}}>
+                                <div id="s7" class="semicircle7" style={{backgroundColor: colors[6]}}>
                                     <div id="s8" class="semicircle8">
                                     </div>
                                 </div>
